@@ -1,0 +1,21 @@
+{
+    "name": "krytenuk/mailchimp",
+    "description": "ZF2 module for using Mailchimp API",
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "authors": [{
+            "name": "Garry Childs",
+            "email": "info@freedomwebservices.net",
+            "homepage": "https://www.freedomwebservices.net/"
+        }],
+    "keywords": ["zf2", "mailchimp", "freedom"],
+    "autoload": {
+        "psr-4": {
+            "FwsMailchimp\\": ""
+        }
+    },
+    "license": "BSD-3-Clause",
+    "type": "module",
+    "homepage": "https://github.com/krytenuk/logger"
+}
