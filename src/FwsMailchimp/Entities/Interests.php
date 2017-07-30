@@ -2,8 +2,6 @@
 
 namespace FwsMailchimp\Entities;
 
-use FwsMailchimp\Entities\InterestCategories as InterestCategoryEntity;
-
 /**
  * Interests Entity
  *

@@ -3,9 +3,6 @@
 namespace FwsMailchimp\Entities;
 
 use FwsMailchimp\Collections\ArrayCollection;
-use FwsMailchimp\Entities\Interests as InterestsEntity;
-use FwsMailchimp\Exception\IncorrectTypeException;
-
 /**
  * InterestCategories Entity
  *
