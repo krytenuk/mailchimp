@@ -128,8 +128,7 @@ class Members extends AbstractMailchimp
         if ($member->getId()) {
             $this->setParameters($member->toArray());
             if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($member->getEmailAddress()))) {
-                $response = $this->getResponse();
-                return $this->createMemberEntity($response);
+                return $this->getMember($member->getEmailAddress());
             }
         }
         return FALSE;
@@ -142,6 +141,7 @@ class Members extends AbstractMailchimp
      */
     private function findMemberInterests(Array $interests)
     {
+        $hydrator = $this->getHydrator();
         $interestCollection = new ArrayCollection();
         foreach ($interests as $interestId => $interested) {
             if ($interested) {

@@ -158,15 +158,14 @@ class Members implements EntityInterface
 
     public function __construct()
     {
-        $this->interests = new ArrayCollection();
         $this->language = new LanguageEntity();
         $this->location = new LocationEntity();
         $this->stats = new MemberStatsEntity();
         $this->ipSignup = '';
         $this->ipOpt = '';
-        $this->timestampSignup = NULL;
-        $this->timestampOpt = NULL;
-        $this->lastChanged = NULL;
+        $this->timestampSignup = '';
+        $this->timestampOpt = '';
+        $this->lastChanged = '';
     }
 
     /**
@@ -437,9 +436,7 @@ class Members implements EntityInterface
      */
     public function setInterested($interestId)
     {
-        if (array_key_exists($interestId, $this->interests)) {
-            $this->interests[$interestId] = TRUE;
-        }
+        $this->interests[$interestId] = TRUE;
         return $this;
     }
 
@@ -450,9 +447,7 @@ class Members implements EntityInterface
      */
     public function unsetInterested($interestId)
     {
-        if (array_key_exists($interestId, $this->interests)) {
-            $this->interests[$interestId] = FALSE;
-        }
+        $this->interests[$interestId] = FALSE;
         return $this;
     }
 

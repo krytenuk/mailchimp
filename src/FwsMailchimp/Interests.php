@@ -146,8 +146,8 @@ class Interests extends AbstractMailchimp
                 $hydrator = $this->getHydrator();
                 foreach ($response['categories'] as $category) {
                     $entity = new InterestCategoryEntity();
+                    $category['interests'] = $this->loadCategoryInterests($category['id']);
                     $hydrator->hydrate($category, $entity);
-                    $entity->setInterests($this->loadCategoryInterests($entity->getId()));
                     $this->interestCategories->add($entity);
                 }
             }

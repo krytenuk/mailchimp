@@ -3,6 +3,8 @@
 namespace FwsMailchimp\Entities;
 
 use FwsMailchimp\Collections\ArrayCollection;
+use FwsMailchimp\Entities\Interests as InterestsEntity;
+
 /**
  * InterestCategories Entity
  *
@@ -124,6 +126,11 @@ class InterestCategories implements EntityInterface
     public function getInterests()
     {
         return $this->interests;
+    }
+
+    public function addInterest(InterestsEntity $interest)
+    {
+        $this->interests->add($interest);
     }
 
     /**
