@@ -5,7 +5,7 @@
         "php": ">=5.5.0",
         "zendframework/zend-stdlib": "^2.3.0",
         "zendframework/zend-http": "^2.3.0",
-        "zendframework/zend-hydrator": "^2.3.0",
+        "zendframework/zend-hydrator": "^1.1.0",
         "zendframework/zend-json": "^2.3.0",
         "zendframework/zend-servicemanager": "^2.3.0"
     },
