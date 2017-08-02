@@ -1,4 +1,5 @@
-<?
+<?php
+
 return array(
     'fwsMailchimp' => array(
         'apikey' => 'your mailchimp api key here',
