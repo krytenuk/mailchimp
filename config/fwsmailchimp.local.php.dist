@@ -2,7 +2,7 @@
 
 return array(
     'fwsMailchimp' => array(
-        'apikey' => 'your mailchimp api key here',
+        'apiKey' => 'your mailchimp api key here',
         'listId' => 'your mailchimp list id here',
     ),
 );
