@@ -22,7 +22,6 @@ class Interests extends AbstractMailchimp
     private $interestCategories;
 
     /**
-     * Initialize the class
      * @param Mailchimp $client
      * @param array $config
      */
