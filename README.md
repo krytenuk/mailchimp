@@ -3,7 +3,7 @@ FwsMailchimp
 
 Docs now available [online](https://www.freedomwebservices.net/zend-framework/fws-mailchimp).
 
-ZF2 Mailchimp module
+ZF3 Mailchimp module
 
 This module integrates with the mailchimp api.
 
@@ -12,23 +12,13 @@ Installation
 
 ### Main Setup
 
-#### By cloning project
-
-1. Install [FwsMailchimp](https://github.com/krytenuk/mailchimp) ZF2 module
-   by cloning it into `./vendor/`.
-2. Clone this project into your `./vendor/` directory.
-
-
-
-
-
 #### With composer
 
 1. Add this project in your composer.json:
 
     ```json
     "require": {
-        "krytenuk/mailchimp": "1.*"
+        "krytenuk/mailchimp": "^0.2"
     }
     ```
 
