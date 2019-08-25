@@ -54,6 +54,7 @@ class Mailchimp
         $client->setEncType(self::ENC_JSON);
         $client->setMethod($method);
         $client->setAuth('user', $this->apiKey);
+        $client->getAdapter()->setCurlOption(CURLOPT_SSL_VERIFYPEER, FALSE);
         switch ($method) {
             case Request::METHOD_GET:
                 $client->setParameterGet($parameters->toArray());
