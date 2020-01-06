@@ -4,11 +4,11 @@ namespace FwsMailchimp;
 
 use FwsMailchimp\Exception\NoApiKeyException;
 use FwsMailchimp\Client\Mailchimp;
-use Zend\Stdlib\Parameters;
-use Zend\Http\PhpEnvironment\RemoteAddress;
-use Zend\Http\Request;
-use Zend\Hydrator\Reflection;
-use Zend\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use Laminas\Stdlib\Parameters;
+use Laminas\Http\PhpEnvironment\RemoteAddress;
+use Laminas\Http\Request;
+use Laminas\Hydrator\Reflection;
+use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 
 /**
  * Abstract mailchimp class

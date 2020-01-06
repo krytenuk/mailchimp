@@ -2,12 +2,12 @@
 
 namespace FwsMailchimp\Client;
 
-use Zend\Stdlib\Parameters;
-use Zend\Http\Client;
-use Zend\Http\Client\Adapter\Curl;
-use Zend\Http\Request;
-use Zend\Http\Response;
-use Zend\Json\Json;
+use Laminas\Stdlib\Parameters;
+use Laminas\Http\Client;
+use Laminas\Http\Client\Adapter\Curl;
+use Laminas\Http\Request;
+use Laminas\Http\Response;
+use Laminas\Json\Json;
 
 /**
  * Mailchimp Client Class

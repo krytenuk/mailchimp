@@ -6,7 +6,7 @@ use FwsMailchimp\Client\Mailchimp;
 use FwsMailchimp\Interests;
 use FwsMailchimp\Collections\ArrayCollection;
 use FwsMailchimp\Entities\Members as MembersEntity;
-use Zend\Hydrator\Strategy\DateTimeFormatterStrategy;
+use Laminas\Hydrator\Strategy\DateTimeFormatterStrategy;
 
 /**
  * Mailchimp member functions
