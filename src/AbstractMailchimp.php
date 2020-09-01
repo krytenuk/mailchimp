@@ -7,7 +7,7 @@ use FwsMailchimp\Client\Mailchimp;
 use Laminas\Stdlib\Parameters;
 use Laminas\Http\PhpEnvironment\RemoteAddress;
 use Laminas\Http\Request;
-use Laminas\Hydrator\Reflection;
+use Laminas\Hydrator\ReflectionHydrator ;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 
 /**
@@ -58,7 +58,7 @@ abstract class AbstractMailchimp
 
     /**
      *
-     * @var Reflection
+     * @var ReflectionHydrator 
      */
     protected $hydrator;
 
@@ -91,7 +91,7 @@ abstract class AbstractMailchimp
         }
 
         $this->parameters = new Parameters();
-        $this->hydrator = new Reflection();
+        $this->hydrator = new ReflectionHydrator ();
         $this->hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
 
         $remote = new RemoteAddress();

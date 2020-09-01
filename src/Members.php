@@ -27,9 +27,9 @@ class Members extends AbstractMailchimp
         parent::__construct($client, $config);
         $this->interests = $interests;
 
-        $this->hydrator->addStrategy('timestampOpt', new DateTimeFormatterStrategy(DATE_ATOM))
-                ->addStrategy('timestampSignup', new DateTimeFormatterStrategy(DATE_ATOM))
-                ->addStrategy('lastChanged', new DateTimeFormatterStrategy(DATE_ATOM));
+        $this->hydrator->addStrategy('timestampOpt', new DateTimeFormatterStrategy(DATE_ATOM));
+        $this->hydrator->addStrategy('timestampSignup', new DateTimeFormatterStrategy(DATE_ATOM));
+        $this->hydrator->addStrategy('lastChanged', new DateTimeFormatterStrategy(DATE_ATOM));
     }
 
     /**
