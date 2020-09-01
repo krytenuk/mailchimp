@@ -1,7 +1,6 @@
 {
     "name": "krytenuk/mailchimp",
     "description": "Zend Framework 3/Laminas module for using Mailchimp API",
-    "version": "0.3.0",
     "require": {
         "php": "^5.6 || ^7.0",
         "laminas/laminas-stdlib": "^3.2",
