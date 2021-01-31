@@ -58,7 +58,7 @@ abstract class AbstractMailchimp
 
     /**
      *
-     * @var ReflectionHydrator 
+     * @var \Laminas\Hydrator\ReflectionHydrator 
      */
     protected $hydrator;
 
@@ -91,7 +91,12 @@ abstract class AbstractMailchimp
         }
 
         $this->parameters = new Parameters();
-        $this->hydrator = new ReflectionHydrator();
+        if (class_exists('Laminas\Hydrator\ReflectionHydrator')) {
+            $this->hydrator = new \Laminas\Hydrator\ReflectionHydrator();
+        } else {
+            $this->hydrator = new \Laminas\Hydrator\Reflection();
+        }
+        
         $this->hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
 
         $remote = new RemoteAddress();
