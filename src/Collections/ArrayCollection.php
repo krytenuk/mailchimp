@@ -39,7 +39,7 @@ class ArrayCollection implements Iterator
         if ($elements instanceof Traversable) {
             $elements = ArrayUtils::iteratorToArray($elements);
         }
-        if (!is_array($elements)) {
+        if (is_array($elements) === false) {
             throw new IncorrectTypeException(sprintf('%s expects elements to ba an array or Traversable object, recuieved %s'), __METHOD__, is_object($elements) ? get_class($elements) : gettype($elements));
         }
         $this->elements = $elements;
@@ -49,7 +49,7 @@ class ArrayCollection implements Iterator
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return $this->elements;
     }
@@ -58,7 +58,7 @@ class ArrayCollection implements Iterator
      *
      * @return integer
      */
-    public function key()
+    public function key(): int
     {
         return $this->index;
     }
@@ -67,7 +67,7 @@ class ArrayCollection implements Iterator
      *
      * @return void
      */
-    public function next()
+    public function next(): void
     {
         ++$this->index;
     }
@@ -76,7 +76,7 @@ class ArrayCollection implements Iterator
      *
      * @return EntityInterface
      */
-    public function current()
+    public function current(): EntityInterface
     {
         return $this->elements[$this->index];
     }
@@ -84,71 +84,72 @@ class ArrayCollection implements Iterator
     /**
      * @return void
      */
-    public function rewind()
+    public function rewind(): void
     {
-        $this->index = 0;
+        if ($this->isEmpty()) {
+            $this->index = 0;
+            return;
+        }
+        $this->index = min(array_keys($this->elements));
     }
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
-        return isset($this->elements[$this->index]);
+        return isset($this->elements[$this->index]) && $this->elements[$this->index] instanceof EntityInterface;
     }
 
     /**
      *
-     * @param string $key
-     * @return EntityInterface|NULL
+     * @param int $key
+     * @return bool
      */
-    public function remove($key)
+    public function remove(int $key): bool
     {
-        if (!isset($this->elements[$key]) && !array_key_exists($key, $this->elements)) {
-            return NULL;
+        if (array_key_exists($key, $this->elements) === false) {
+            return false;
         }
 
-        $removed = $this->elements[$key];
         unset($this->elements[$key]);
-
-        return $removed;
+        return true;
     }
 
     /**
      *
      * @param EntityInterface $element
-     * @return boolean
+     * @return bool
      */
-    public function removeElement(EntityInterface $element)
+    public function removeElement(EntityInterface $element): bool
     {
-        $key = array_search($element, $this->elements, TRUE);
+        $key = array_search($element, $this->elements, true);
 
-        if ($key === FALSE) {
-            return FALSE;
+        if ($key === false) {
+            return false;
         }
 
         unset($this->elements[$key]);
-
-        return TRUE;
+        return true;
     }
 
     /**
      *
-     * @return integer
+     * @return int
      */
-    public function count()
+    public function count(): int
     {
-        return count($this->elements);
+        return (int) count($this->elements);
     }
 
     /**
      *
-     * @param integer $key
+     * @param int $key
      * @param EntityInterface $value
-     * @return \FwsMailchimp\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function set($key, EntityInterface $value)
+    public function set(int $key, EntityInterface $value): ArrayCollection
     {
         $this->elements[$key] = $value;
         return $this;
@@ -157,9 +158,9 @@ class ArrayCollection implements Iterator
     /**
      *
      * @param EntityInterface $value
-     * @return \FwsMailchimp\Collections\ArrayCollection
+     * @return ArrayCollection
      */
-    public function add(EntityInterface $value)
+    public function add(EntityInterface $value): ArrayCollection
     {
         $this->elements[] = $value;
         return $this;
@@ -167,7 +168,7 @@ class ArrayCollection implements Iterator
 
     /**
      *
-     * @return boolean
+     * @return bool
      */
     public function isEmpty()
     {
@@ -177,16 +178,19 @@ class ArrayCollection implements Iterator
     /**
      * Find entity by id
      * @param string $id
-     * @return EntityInterface|NULL
+     * @return EntityInterface|null
      */
-    public function get($id)
+    public function get($id): ?EntityInterface
     {
+        if (empty($this->elements)) {
+            return null;
+        }
         foreach ($this->elements as $entity) {
-            if ($entity->getId() == $id) {
+            if ($entity->getId() === $id) {
                 return $entity;
             }
         }
-        return NULL;
+        return null;
     }
 
 }

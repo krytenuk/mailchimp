@@ -28,38 +28,42 @@ class InterestCategories implements EntityInterface
      *
      * @var string
      */
-    private $id;
+    private string $id = '';
 
     /**
      *
      * @var string
      */
-    private $listId;
+    private string $listId = '';
 
     /**
      *
      * @var string
      */
-    private $title;
+    private string $title = '';
 
     /**
      *
-     * @var integer
+     * @var int
      */
-    private $displayOrder;
+    private int $displayOrder = 0;
 
     /**
      *
      * @var string
      */
-    private $type;
+    private string $type = '';
 
     /**
      *
      * @var ArrayCollection
      */
-    private $interests;
+    private ArrayCollection $interests;
 
+    /**
+     * Initialize entity
+     * @return void
+     */
     public function __construct()
     {
         $this->interests = new ArrayCollection();
@@ -69,7 +73,7 @@ class InterestCategories implements EntityInterface
      * Get all valid category types
      * @return array
      */
-    public function getValidTypes()
+    public function getValidTypes(): array
     {
         return $this->validTypes;
     }
@@ -78,7 +82,7 @@ class InterestCategories implements EntityInterface
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -87,7 +91,7 @@ class InterestCategories implements EntityInterface
      *
      * @return string
      */
-    public function getListId()
+    public function getListId(): string
     {
         return $this->listId;
     }
@@ -96,16 +100,16 @@ class InterestCategories implements EntityInterface
      *
      * @return string
      */
-    public function getTitle()
+    public function getTitle(): string
     {
         return $this->title;
     }
 
     /**
      *
-     * @return integer
+     * @return int
      */
-    public function getDisplayOrder()
+    public function getDisplayOrder(): int
     {
         return $this->displayOrder;
     }
@@ -114,7 +118,7 @@ class InterestCategories implements EntityInterface
      *
      * @return string
      */
-    public function getType()
+    public function getType(): string
     {
         return $this->type;
     }
@@ -123,21 +127,27 @@ class InterestCategories implements EntityInterface
      *
      * @return ArrayCollection
      */
-    public function getInterests()
+    public function getInterests(): ArrayCollection
     {
         return $this->interests;
     }
 
-    public function addInterest(InterestsEntity $interest)
+    /**
+     * 
+     * @param InterestsEntity $interest
+     * @return InterestCategories
+     */
+    public function addInterest(InterestsEntity $interest): InterestCategories
     {
         $this->interests->add($interest);
+        return $this;
     }
 
     /**
-     *
+     * Used for Mailchimp API
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return array(
             'title' => $this->title,

@@ -7,7 +7,7 @@ use FwsMailchimp\Client\Mailchimp;
 use Laminas\Stdlib\Parameters;
 use Laminas\Http\PhpEnvironment\RemoteAddress;
 use Laminas\Http\Request;
-use Laminas\Hydrator\ReflectionHydrator;
+use Laminas\Hydrator\HydratorInterface;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 
 /**
@@ -58,9 +58,9 @@ abstract class AbstractMailchimp
 
     /**
      *
-     * @var \Laminas\Hydrator\ReflectionHydrator 
+     * @var HydratorInterface
      */
-    protected $hydrator;
+    protected HydratorInterface $hydrator;
 
     /**
      *
@@ -230,10 +230,10 @@ abstract class AbstractMailchimp
     }
 
     /**
-     *
-     * @return ClassMethods
+     * Get reflection hydrator
+     * @return HydratorInterface
      */
-    protected function getHydrator()
+    protected function getHydrator(): HydratorInterface
     {
         return $this->hydrator;
     }
@@ -244,7 +244,7 @@ abstract class AbstractMailchimp
      * @param string $method
      * @param Parameters $parameters
      */
-    private function logError($apiurl, $method, Parameters $parameters)
+    private function logError($apiurl, $method, Parameters $parameters): void
     {
         $this->errors[] = array(
             'apiurl' => $apiurl,
@@ -259,7 +259,7 @@ abstract class AbstractMailchimp
      * @param string $apiurl
      * @return boolean
      */
-    protected function get($apiurl)
+    protected function get($apiurl): bool
     {
         return $this->call($apiurl, Request::METHOD_GET, $this->parameters);
     }
@@ -269,7 +269,7 @@ abstract class AbstractMailchimp
      * @param string $apiurl
      * @return boolean
      */
-    protected function delete($apiurl)
+    protected function delete($apiurl): bool
     {
         return $this->call($apiurl, Request::METHOD_DELETE, $this->parameters);
     }
@@ -279,7 +279,7 @@ abstract class AbstractMailchimp
      * @param string $apiurl
      * @return boolean
      */
-    protected function post($apiurl)
+    protected function post($apiurl): bool
     {
         return $this->call($apiurl, Request::METHOD_POST, $this->parameters);
     }
@@ -289,7 +289,7 @@ abstract class AbstractMailchimp
      * @param string $apiurl
      * @return boolean
      */
-    protected function patch($apiurl)
+    protected function patch($apiurl): bool
     {
         return $this->call($apiurl, Request::METHOD_PATCH, $this->parameters);
     }
@@ -299,7 +299,7 @@ abstract class AbstractMailchimp
      * @param string $apiurl
      * @return boolean
      */
-    protected function put($apiurl)
+    protected function put($apiurl): bool
     {
         return $this->call($apiurl, Request::METHOD_PUT, $this->parameters);
     }
@@ -311,13 +311,13 @@ abstract class AbstractMailchimp
      * @param Parameters $parameters
      * @return boolean
      */
-    private function call($apiurl, $method, Parameters $parameters)
+    private function call($apiurl, $method, Parameters $parameters): bool
     {
         if ($this->client->call($apiurl, $method, $parameters)) {
-            return TRUE;
+            return true;
         } else {
             $this->logError($apiurl, $method, $parameters);
-            return FALSE;
+            return false;
         }
     }
 

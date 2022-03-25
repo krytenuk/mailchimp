@@ -1,6 +1,6 @@
 {
     "name": "krytenuk/mailchimp",
-    "description": "Zend Framework 3/Laminas module for using Mailchimp API",
+    "description": "Laminas module for using Mailchimp API",
     "require": {
         "php": "^7.0 || ~8.0.0 || ~8.1.0",
         "laminas/laminas-stdlib": "^3.6",
@@ -14,7 +14,7 @@
             "email": "info@freedomwebservices.net",
             "homepage": "https://www.freedomwebservices.net/"
         }],
-    "keywords": ["zf3", "mailchimp", "freedom"],
+    "keywords": ["Laminas", "Mailchimp", "Freedom"],
     "autoload": {
         "psr-4": {
             "FwsMailchimp\\": "src/"
@@ -22,5 +22,11 @@
     },
     "license": "BSD-3-Clause",
     "type": "module",
-    "homepage": "https://github.com/krytenuk/mailchimp"
+    "homepage": "https://github.com/krytenuk/mailchimp",
+    "funding": [
+        {
+            "type": "other",
+            "url": "https://www.freedomwebservices.net/laminas/fws-mailchimp#donate"
+        }
+    ]
 }

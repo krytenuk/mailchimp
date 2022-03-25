@@ -14,43 +14,43 @@ class Interests implements EntityInterface
      *
      * @var string
      */
-    private $id;
+    private string $id = '';
 
     /**
      *
      * @var string
      */
-    private $categoryId;
+    private string $categoryId = '';
 
     /**
      *
      * @var string
      */
-    private $listId;
+    private string $listId = '';
 
     /**
      *
      * @var string
      */
-    private $name;
+    private string $name = '';
 
     /**
      *
-     * @var integer
+     * @var int
      */
-    private $subscriberCount;
+    private int $subscriberCount = 0;
 
     /**
      *
-     * @var integer
+     * @var int
      */
-    private $displayOrder;
+    private int $displayOrder = 0;
 
     /**
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -59,7 +59,7 @@ class Interests implements EntityInterface
      *
      * @return string
      */
-    public function getCategoryId()
+    public function getCategoryId(): string
     {
         return $this->categoryId;
     }
@@ -68,7 +68,7 @@ class Interests implements EntityInterface
      *
      * @return string
      */
-    public function getListId()
+    public function getListId(): string
     {
         return $this->listId;
     }
@@ -77,25 +77,25 @@ class Interests implements EntityInterface
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
     /**
      *
-     * @return integer
+     * @return int
      */
-    public function getSubscriberCount()
+    public function getSubscriberCount(): int
     {
         return $this->subscriberCount;
     }
 
     /**
      *
-     * @return integer
+     * @return int
      */
-    public function getDisplayOrder()
+    public function getDisplayOrder(): int
     {
         return $this->displayOrder;
     }
@@ -104,12 +104,12 @@ class Interests implements EntityInterface
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array(
+        return [
             'name' => $this->name,
             'display_order' => $this->displayOrder,
-        );
+        ];
     }
 
 }

@@ -14,45 +14,43 @@ class Locations implements EntityInterface
      *
      * @var float
      */
-    private $latitude;
+    private float $latitude = 0.00;
 
     /**
      *
      * @var float
      */
-    private $longitude;
+    private float $longitude = 0.00;
 
     /**
      *
-     * @var integer
+     * @var int
      */
-    private $gmtoff;
+    private ?int $gmtoff = null;
 
     /**
      *
-     * @var integer
+     * @var int
      */
-    private $dstoff;
-
-    /**
-     *
-     * @var string
-     */
-    private $countryCode;
+    private ?int $dstoff = null;
 
     /**
      *
      * @var string
      */
-    private $timezone;
+    private string $countryCode = '';
 
-    public function __construct()
-    {
-        $this->latitude = 0;
-        $this->longitude = 0;
-    }
+    /**
+     *
+     * @var string
+     */
+    private string $timezone = '';
 
-    public function getId()
+    /**
+     * 
+     * @return void
+     */
+    public function getId(): void
     {
         // not used, required by EntityInterface
     }
@@ -61,7 +59,7 @@ class Locations implements EntityInterface
      *
      * @return float
      */
-    public function getLatitude()
+    public function getLatitude(): float
     {
         return $this->latitude;
     }
@@ -70,7 +68,7 @@ class Locations implements EntityInterface
      *
      * @return float
      */
-    public function getLongitude()
+    public function getLongitude(): float
     {
         return $this->longitude;
     }
@@ -79,7 +77,7 @@ class Locations implements EntityInterface
      *
      * @return integer
      */
-    public function getGmtoff()
+    public function getGmtoff(): ?int
     {
         return $this->gmtoff;
     }
@@ -88,7 +86,7 @@ class Locations implements EntityInterface
      *
      * @return integer
      */
-    public function getDstoff()
+    public function getDstoff(): ?int
     {
         return $this->dstoff;
     }
@@ -97,7 +95,7 @@ class Locations implements EntityInterface
      *
      * @return string
      */
-    public function getCountryCode()
+    public function getCountryCode(): string
     {
         return $this->countryCode;
     }
@@ -106,35 +104,43 @@ class Locations implements EntityInterface
      *
      * @return string
      */
-    public function getTimezone()
+    public function getTimezone(): string
     {
         return $this->timezone;
     }
 
     /**
-     *
+     * 
      * @param float $latitude
+     * @return Locations
      */
-    public function setLatitude($latitude)
+    public function setLatitude(float $latitude): Locations
     {
         $this->latitude = $latitude;
+        return $this;
     }
 
     /**
-     *
+     * 
      * @param float $longitude
+     * @return Locations
      */
-    public function setLongitude($longitude)
+    public function setLongitude(float $longitude): Locations
     {
         $this->longitude = $longitude;
+        return $this;
     }
 
-    public function toArray()
+    /**
+     * Get entity as an array as used by Mailchimp API
+     * @return array
+     */
+    public function toArray(): array
     {
-        return array(
+        return [
             'latitude' => $this->latitude,
             'longitude' => $this->longitude,
-        );
+        ];
     }
 
 }

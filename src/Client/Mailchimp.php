@@ -19,24 +19,26 @@ class Mailchimp
     const ENC_JSON = 'application/json';
 
     /**
-     *
-     * @var Response
+     * 
+     * @var Response|null
      */
-    private $response;
+    private ?Response $response;
 
     /**
-     *
-     * @var string
+     * 
+     * @var string|null
      */
-    private $apiKey = NULL;
+    private ?string $apiKey = null;
 
     /**
      *
      * @param string $apiKey
+     * @return $this
      */
-    public function setApiKey($apiKey)
+    public function setApiKey(string $apiKey)
     {
         $this->apiKey = $apiKey;
+        return $this;
     }
 
     /**
@@ -54,7 +56,7 @@ class Mailchimp
         $client->setEncType(self::ENC_JSON);
         $client->setMethod($method);
         $client->setAuth('user', $this->apiKey);
-        $client->getAdapter()->setCurlOption(CURLOPT_SSL_VERIFYPEER, FALSE);
+        $client->getAdapter()->setCurlOption(CURLOPT_SSL_VERIFYPEER, false);
         switch ($method) {
             case Request::METHOD_GET:
                 $client->setParameterGet($parameters->toArray());
@@ -71,14 +73,14 @@ class Mailchimp
 
     /**
      * Get the response body as an array
-     * @return array|NULL
+     * @return array|null
      */
-    public function getRespose()
+    public function getRespose(): ?array
     {
         if ($this->response instanceof Response) {
-            return Json::decode($this->response->getBody(), TRUE);
+            return Json::decode($this->response->getBody(), true);
         }
-        return NULL;
+        return null;
     }
 
 }

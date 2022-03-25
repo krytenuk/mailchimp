@@ -14,7 +14,7 @@ class Languages implements EntityInterface
      *
      * @var string
      */
-    private $id;
+    private $id = '';
 
     /**
      *
@@ -74,19 +74,11 @@ class Languages implements EntityInterface
         'vi' => 'Vietnamese',
     );
 
-    /**#
-     * Initialize class
-     */
-    public function __construct()
-    {
-        $this->id = '';
-    }
-
     /**
      * Get the language code
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -95,7 +87,7 @@ class Languages implements EntityInterface
      * Get the language
      * @return string
      */
-    public function getLanguage()
+    public function getLanguage(): string
     {
         if (array_key_exists($this->id, $this->validLanguageCodes)) {
             return $this->validLanguageCodes[$this->id];
@@ -107,7 +99,7 @@ class Languages implements EntityInterface
      * Get all valid language codes
      * @return array
      */
-    public function getValidLanguageCodes()
+    public function getValidLanguageCodes(): array
     {
         return $this->validLanguageCodes;
     }
@@ -115,22 +107,24 @@ class Languages implements EntityInterface
     /**
      * Set the language code
      * @param string $id
+     * @return Languages
      */
-    public function setId($id)
+    public function setId(string $id): Languages
     {
         $this->id = $id;
+        return $this;
     }
 
     /**
      *
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
-        return array(
+        return [
             'id' => $this->id,
             'language' => $this->getLanguage(),
-        );
+        ];
     }
 
 }

@@ -19,7 +19,7 @@ class Interests extends AbstractMailchimp
      *
      * @var ArrayCollection
      */
-    private $interestCategories;
+    private ArrayCollection $interestCategories;
 
     /**
      * @param Mailchimp $client
@@ -37,119 +37,136 @@ class Interests extends AbstractMailchimp
      * Refresh/reload the list
      * @return boolean
      */
-    public function refresh()
+    public function refresh(): bool
     {
         $this->clearErrors();
         $this->loadInterestCategories();
         if ($this->hasErrors()) {
-            return FALSE;
+            return false;
         }
-        return TRUE;
+        return true;
     }
 
     /**
      * List interest categories (groups) in list
-     * @return ArrayCollection|NULL
+     * @return ArrayCollection|null
      */
-    public function listInterestCategories()
+    public function listInterestCategories(): ?ArrayCollection
     {
         return $this->interestCategories;
     }
 
     /**
      * Get interest category (group)
-     * @param type $interestCategoryId
-     * @return InterestCategoryEntity|NULL
+     * @param string $interestCategoryId
+     * @return InterestCategoryEntity|null
      */
-    public function getInterestCategory($interestCategoryId)
+    public function getInterestCategory(string $interestCategoryId): ?InterestCategoryEntity
     {
-        if (!$this->interestCategories->isEmpty()) {
-            foreach ($this->interestCategories as $category) {
-                if ($category->getId() == $interestCategoryId) {
-                    return $category;
-                }
+        if ($this->interestCategories->isEmpty()) {
+            return null;
+        }
+
+        foreach ($this->interestCategories as $category) {
+            if ($category->getId() === $interestCategoryId) {
+                return $category;
             }
         }
-        return NULL;
+
+        return null;
     }
 
     /**
      * Find an interest category by interest id
      * @param string $interestId
-     * @return InterestCategoryEntity|NULL
+     * @return InterestCategoryEntity|null
      */
-    public function findInterestCategory($interestId)
+    public function findInterestCategory(string $interestId): ?InterestCategoryEntity
     {
+        if ($this->interestCategories->isEmpty()) {
+            return null;
+        }
 
-        if (!$this->interestCategories->isEmpty()) {
-            foreach ($this->interestCategories as $category) {
-                if (!$category->getInterests()->isEmpty()) {
-                    foreach ($category->getInterests() as $interest) {
-                        if ($interest->getId() == $interestId) {
-                            return $category;
-                        }
-                    }
+        foreach ($this->interestCategories as $category) {
+            if ($category->getInterests()->isEmpty()) {
+                continue;
+            }
+            foreach ($category->getInterests() as $interest) {
+                if ($interest->getId() === $interestId) {
+                    return $category;
                 }
             }
         }
-        return NULL;
+
+        return null;
     }
 
     /**
      * Get category (group) interests
      * @param string $interestCategoryId
-     * @return ArrayCollection|NULL
+     * @return ArrayCollection|null
      */
-    public function listCategoryInterests($interestCategoryId)
+    public function listCategoryInterests(string $interestCategoryId): ?ArrayCollection
     {
-        if (!$this->interestCategories->isEmpty()) {
-            foreach ($this->interestCategories as $category) {
-                if ($category->getId() == $interestCategoryId) {
-                    return $category->getInterests();
-                }
+        if ($this->interestCategories->isEmpty()) {
+            return null;
+        }
+        
+        foreach ($this->interestCategories as $category) {
+            if ($category->getId() === $interestCategoryId) {
+                return $category->getInterests();
             }
         }
-        return NULL;
+
+        return null;
     }
 
     /**
      *
      * @param string $interestId
-     * @return InterestsEntity|NULL
+     * @return InterestsEntity|null
      */
-    public function getInterest($interestId)
+    public function getInterest(string $interestId): ?InterestsEntity
     {
+        
+        if ($this->interestCategories->isEmpty()) {
+            return null;
+        }
 
-        if (!$this->interestCategories->isEmpty()) {
-            foreach ($this->interestCategories as $category) {
-                if (!$category->getInterests()->isEmpty()) {
-                    foreach ($category->getInterests() as $interest) {
-                        if ($interest->getId() == $interestId) {
-                            return $interest;
-                        }
-                    }
+        foreach ($this->interestCategories as $category) {
+            if ($category->getInterests()->isEmpty()) {
+                continue;
+            }
+            foreach ($category->getInterests() as $interest) {
+                if ($interest->getId() === $interestId) {
+                    return $interest;
                 }
             }
         }
-        return NULL;
+
+        return null;
     }
 
     /**
      * Load interest categories (groups)
      */
-    private function loadInterestCategories()
+    private function loadInterestCategories(): void
     {
-        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/interest-categories')) {
-            $response = $this->getResponse();
-            if (isset($response['categories']) && !empty($response['categories'])) {
-                $hydrator = $this->getHydrator();
-                foreach ($response['categories'] as $category) {
-                    $entity = new InterestCategoryEntity();
-                    $category['interests'] = $this->loadCategoryInterests($category['id']);
-                    $hydrator->hydrate($category, $entity);
-                    $this->interestCategories->add($entity);
-                }
-            }
+        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/interest-categories') === false) {
+            return;
+        }
+
+        $response = $this->getResponse();
+        if (isset($response['categories']) === false || empty($response['categories']) === true) {
+            return;
+        }
+
+        $hydrator = $this->getHydrator();
+        foreach ($response['categories'] as $category) {
+            $entity = new InterestCategoryEntity();
+            $category['interests'] = $this->loadCategoryInterests($category['id']);
+            $hydrator->hydrate($category, $entity);
+            $this->interestCategories->add($entity);
         }
     }
 
@@ -158,19 +175,23 @@ class Interests extends AbstractMailchimp
      * @param string $interestCategoryId
      * @return ArrayCollection
      */
-    private function loadCategoryInterests($interestCategoryId)
+    private function loadCategoryInterests($interestCategoryId): ArrayCollection
     {
         $collection = new ArrayCollection();
-        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/interest-categories/' . $interestCategoryId . '/interests')) {
-            $response = $this->getResponse();
-            if (isset($response['interests']) && !empty($response['interests'])) {
-                $hydrator = $this->getHydrator();
-                foreach ($response['interests'] as $interest) {
-                    $entity = new InterestsEntity();
-                    $hydrator->hydrate($interest, $entity);
-                    $collection->add($entity);
-                }
-            }
+        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/interest-categories/' . $interestCategoryId . '/interests') === false) {
+            return $collection;
+        }
+
+        $response = $this->getResponse();
+        if (array_key_exists('interests', $response) === false || is_array($response['interests']) === false || empty($response['interests']) === true) {
+            return $collection;
+        }
+        
+        $hydrator = $this->getHydrator();
+        foreach ($response['interests'] as $interest) {
+            $entity = new InterestsEntity();
+            $hydrator->hydrate($interest, $entity);
+            $collection->add($entity);
         }
         return $collection;
     }

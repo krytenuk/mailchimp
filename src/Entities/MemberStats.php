@@ -12,46 +12,46 @@ class MemberStats implements EntityInterface
 
     /**
      *
-     * @var number
+     * @var float
      */
-    private $avgOpenRate;
+    private float $avgOpenRate = 0.00;
 
     /**
      *
-     * @var number
+     * @var float
      */
-    private $avgClickRate;
+    private float $avgClickRate = 0.00;
 
     public function getId()
     {
-        return NULL; // not used, required by EntityInterface
+        return null; // not used, required by EntityInterface
     }
 
     /**
      *
      * @return number
      */
-    public function getAvgOpenRate()
+    public function getAvgOpenRate(): float
     {
-        return $this->avgOpenRate;
+        return (float) $this->avgOpenRate;
     }
 
     /**
      *
      * @return number
      */
-    public function getAvgClickRate()
+    public function getAvgClickRate(): float
     {
-        return $this->avgClickRate;
+        return (float) $this->avgClickRate;
     }
 
     /**
-     * Convert Members object to array for use in mailchimp api
+     * Convert Members object to array for use in mailchimp API
      * @return array
      */
     public function toArray()
     {
-        return array(); // not used, required by EntityInterface
+        return []; // not used, required by EntityInterface
     }
 
 }

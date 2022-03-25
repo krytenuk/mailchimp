@@ -6,6 +6,7 @@ use FwsMailchimp\Client\Mailchimp;
 use FwsMailchimp\Interests;
 use FwsMailchimp\Collections\ArrayCollection;
 use FwsMailchimp\Entities\Members as MembersEntity;
+use FwsMailchimp\Entities\InterestCategories as MemberInterestsCategory;
 use Laminas\Hydrator\Strategy\DateTimeFormatterStrategy;
 
 /**
@@ -22,6 +23,12 @@ class Members extends AbstractMailchimp
      */
     private $interests;
 
+    /**
+     * 
+     * @param Mailchimp $client
+     * @param array $config
+     * @param Interests $interests
+     */
     public function __construct(Mailchimp $client, Array $config, Interests $interests)
     {
         parent::__construct($client, $config);
@@ -34,35 +41,38 @@ class Members extends AbstractMailchimp
 
     /**
      * Get lists members
-     * @return ArrayCollection|NULL
+     * @return ArrayCollection|null
      */
-    public function listMembers()
+    public function listMembers(): ?ArrayCollection
     {
-        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members')) {
-            $response = $this->getResponse();
-            if (isset($response['members']) && !empty($response['members'])) {
-                $collection = new ArrayCollection();
-                foreach ($response['members'] as $member) {
-                    $collection->add($this->createMemberEntity($member));
-                }
-                return $collection;
-            }
+        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members') === false) {
+            return null;
         }
-        return NULL;
+
+        $response = $this->getResponse();
+        if (isset($response['members']) === false || empty($response['members']) === true) {
+            return null;
+        }
+
+        $collection = new ArrayCollection();
+        foreach ($response['members'] as $member) {
+            $collection->add($this->createMemberEntity($member));
+        }
+        return $collection;
     }
 
     /**
      * Get list member
      * @param string $emailAddress
-     * @return MembersEntity|NULL
+     * @return MembersEntity|null
      */
-    public function getMember($emailAddress)
+    public function getMember($emailAddress): ?MembersEntity
     {
-        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress))) {
+        if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress)) === true) {
             $response = $this->getResponse();
             return $this->createMemberEntity($response);
         }
-        return NULL;
+        return null;
     }
 
     /**
@@ -71,7 +81,7 @@ class Members extends AbstractMailchimp
      * @param MembersEntity $member
      * @return boolean
      */
-    public function add(MembersEntity $member)
+    public function add(MembersEntity $member): bool
     {
         $this->setParameters($member->toArray());
         return $this->post($this->apiEndpoint . '/lists/' . $this->listId . '/members');
@@ -80,58 +90,83 @@ class Members extends AbstractMailchimp
     /**
      * Subscribe an existing list member
      * @param string $emailAddress
-     * @return MembersEntity|FALSE
+     * @return MembersEntity|null
      */
-    public function subscribe($emailAddress)
+    public function subscribe($emailAddress): ?MembersEntity
     {
         $this->status = 'subscribed';
         if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress))) {
             $response = $this->getResponse();
             return $this->createMemberEntity($response);
         }
-        return FALSE;
+        return null;
     }
 
     /**
      * Unsubscribe an existing list member
      * @param string $emailAddress
-     * @return MembersEntity|FALSE
+     * @return MembersEntity|null
      */
-    public function unsubscribe($emailAddress)
+    public function unsubscribe($emailAddress): ?MembersEntity
     {
         $this->status = 'unsubscribed';
-        if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress))) {
+        if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress)) === true) {
             $response = $this->getResponse();
             return $this->createMemberEntity($response);
         }
-        return FALSE;
+        return null;
+    }
+
+    /**
+     * Archive existing list member
+     * @param string $emailAddress
+     * @return bool
+     */
+    public function archive($emailAddress): bool
+    {
+        return $this->delete($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress));
+    }
+    
+    /**
+     * Soft delete list member (archive)
+     * @see Members::archive()
+     * @param type $emailAddress
+     * @return bool
+     */
+    public function remove($emailAddress): bool
+    {
+        return $this->archive($emailAddress);
     }
 
     /**
      * Remove\Delete existing list member
+     * WARNING: The member will be permanently deleted and can not resubscribe through the Mailchimp API
      * @param string $emailAddress
-     * @return boolean
+     * @return bool
      */
-    public function remove($emailAddress)
+    public function removePerminant($emailAddress): bool
     {
-        return $this->delete($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress));
+        return $this->post($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress) . '/actions/delete-permanent');
     }
 
     /**
      * Update existing list members details
      * To update a member you must fist get the member entity with @see self::getMember()
      * @param MembersEntity $member
-     * @return MembersEntity
+     * @return bool
      */
-    public function update(MembersEntity $member)
+    public function update(MembersEntity $member): bool
     {
-        if ($member->getId()) {
-            $this->setParameters($member->toArray());
-            if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($member->getEmailAddress()))) {
-                return $this->getMember($member->getEmailAddress());
-            }
+        if ($member->getId() === null) {
+            return false;
         }
-        return FALSE;
+        
+        $this->setParameters($member->toArray());
+        if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($member->getEmailAddress())) === false) {
+            return false;
+        }
+        
+        return true;
     }
 
     /**
@@ -139,23 +174,31 @@ class Members extends AbstractMailchimp
      * @param array $interests
      * @return ArrayCollection
      */
-    private function findMemberInterests(Array $interests)
+    private function findMemberInterests(array $interests): ArrayCollection
     {
-        $hydrator = $this->getHydrator();
         $interestCollection = new ArrayCollection();
         foreach ($interests as $interestId => $interested) {
-            if ($interested) {
-                if ($interestCategory = $this->interests->findInterestCategory($interestId)) {
-                    if ($interestEntity = $this->interests->getInterest($interestId)) {
-                        if ($category = $interestCollection->get($interestCategory->getId())) {
-                            $category->addInterest($interestEntity);
-                        } else {
-                            $interestCategory = clone($interestCategory);
-                            $interestCategory->addInterest($interestEntity);
-                            $interestCollection->add($interestCategory);
-                        }
-                    }
-                }
+            if ((bool)$interested === false) {
+                continue;
+            }
+            
+            $interestCategory = $this->interests->findInterestCategory($interestId);
+            if ($interestCategory === null) {
+                continue;
+            }
+
+            $interestEntity = $this->interests->getInterest($interestId);
+            if ($interestEntity === null) {
+                continue;
+            }
+
+            $category = $interestCollection->get($interestCategory->getId());
+            if ($category instanceof MemberInterestsCategory) {
+                $category->addInterest($interestEntity);
+            } else {
+                $interestCategory = clone($interestCategory);
+                $interestCategory->addInterest($interestEntity);
+                $interestCollection->add($interestCategory);
             }
         }
         return $interestCollection;
@@ -166,7 +209,7 @@ class Members extends AbstractMailchimp
      * @param array $memberArray
      * @return MembersEntity
      */
-    private function createMemberEntity(Array &$memberArray)
+    private function createMemberEntity(array &$memberArray): MembersEntity
     {
         $hydrator = $this->getHydrator();
         $entity = new MembersEntity();
