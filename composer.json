@@ -2,7 +2,7 @@
     "name": "krytenuk/mailchimp",
     "description": "Laminas module for using Mailchimp API",
     "require": {
-        "php": "^7.0 || ~8.0.0 || ~8.1.0",
+        "php": ">=7.4",
         "laminas/laminas-stdlib": "^3.6",
         "laminas/laminas-http": "^2.15",
         "laminas/laminas-hydrator": "^4.3",
@@ -23,6 +23,11 @@
     "license": "BSD-3-Clause",
     "type": "module",
     "homepage": "https://github.com/krytenuk/mailchimp",
+    "extra": {
+        "zf": {
+            "module": "FwsMailchimp"
+        }
+    },
     "funding": [
         {
             "type": "other",
