@@ -4,11 +4,13 @@ namespace FwsMailchimp;
 
 use FwsMailchimp\Exception\NoApiKeyException;
 use FwsMailchimp\Client\Mailchimp;
+use Laminas\Hydrator\ReflectionHydrator;
 use Laminas\Stdlib\Parameters;
 use Laminas\Http\PhpEnvironment\RemoteAddress;
 use Laminas\Http\Request;
-use Laminas\Hydrator\HydratorInterface;
 use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
+use Laminas\Stdlib\ParametersInterface;
+use stdClass;
 
 /**
  * Abstract mailchimp class
@@ -18,65 +20,36 @@ use Laminas\Hydrator\NamingStrategy\UnderscoreNamingStrategy;
 abstract class AbstractMailchimp
 {
 
-    const LATEST_API_VERSION = '3.0';
+    public const LATEST_API_VERSION = '3.0';
+
+    protected string|null $apiKey = null;
+
+    protected string|null $apiEndpoint = null;
+
+    protected string|null $listId = null;
 
     /**
      *
-     * @var string
+     * @var stdClass[]
      */
-    protected $apiKey = NULL;
+    private array $errors = [];
+
+    protected ParametersInterface $parameters;
+
+    protected ReflectionHydrator $hydrator;
+
+    private string $clientIpAddress = '';
 
     /**
-     *
-     * @var string
-     */
-    protected $apiEndpoint = NULL;
-
-    /**
-     *
-     * @var string
-     */
-    protected $listId = NULL;
-
-    /**
-     *
-     * @var Mailchimp
-     */
-    protected $client;
-
-    /**
-     *
-     * @var array
-     */
-    private $errors = array();
-
-    /**
-     *
-     * @var Parameters
-     */
-    protected $parameters;
-
-    /**
-     *
-     * @var HydratorInterface
-     */
-    protected HydratorInterface $hydrator;
-
-    /**
-     *
-     * @var string
-     */
-    private $clientIpAddress;
-
-    /**
-     * Initialize class
      * @param Mailchimp $client
-     * @param array $config
+     * @param array<string, mixed> $config
      * @throws NoApiKeyException
      */
-    public function __construct(Mailchimp $client, Array $config)
+    public function __construct(
+        protected Mailchimp $client,
+        array $config
+    )
     {
-        $this->client = $client;
         if (isset($config['fwsMailchimp']['apiKey'])) {
             $this->apiKey = $config['fwsMailchimp']['apiKey'];
             $this->client->setApiKey($this->apiKey);
@@ -91,11 +64,7 @@ abstract class AbstractMailchimp
         }
 
         $this->parameters = new Parameters();
-        if (class_exists('Laminas\Hydrator\ReflectionHydrator')) {
-            $this->hydrator = new \Laminas\Hydrator\ReflectionHydrator();
-        } else {
-            $this->hydrator = new \Laminas\Hydrator\Reflection();
-        }
+        $this->hydrator = new ReflectionHydrator();
         
         $this->hydrator->setNamingStrategy(new UnderscoreNamingStrategy());
 
@@ -105,19 +74,19 @@ abstract class AbstractMailchimp
 
     /**
      * Get the mailchimp list id
-     * @return string
+     * @return string|null
      */
-    public function getListId()
+    public function getListId(): string|null
     {
         return $this->listId;
     }
 
     /**
      * Set the mailchimp list id
-     * @param string $listId
-     * @return \FwsMailchimp\AbstractMailchimp
+     * @param string|null $listId
+     * @return AbstractMailchimp
      */
-    public function setListId($listId)
+    public function setListId(?string $listId): AbstractMailchimp
     {
         $this->listId = $listId;
         return $this;
@@ -125,23 +94,23 @@ abstract class AbstractMailchimp
 
     /**
      * Set mailchimp parameters
-     * @param array $parameters
+     * @param array<string, mixed> $parameters
+     * @return AbstractMailchimp
      */
-    protected function setParameters(Array $parameters)
+    protected function setParameters(array $parameters): AbstractMailchimp
     {
         $this->parameters->fromArray($parameters);
+        return $this;
     }
 
     /**
      * Set mailchimp parameter
      * @param string $name
      * @param mixed $value
-     * @return \FwsMailchimp\AbstractMailchimp
      */
-    public function __set($name, $value)
+    public function __set(string $name, mixed $value): void
     {
         $this->parameters->$name = $value;
-        return $this;
     }
 
     /**
@@ -149,7 +118,7 @@ abstract class AbstractMailchimp
      * @param string $name
      * @return mixed
      */
-    public function __get($name)
+    public function __get(string $name)
     {
         return $this->parameters->$name;
     }
@@ -158,36 +127,36 @@ abstract class AbstractMailchimp
      * Get mailchimp api response body for last call
      * @return array
      */
-    protected function getResponse()
+    protected function getResponse(): array
     {
-        return $this->client->getRespose();
+        return $this->client->getResponse();
     }
 
     /**
      * Get errors array
-     * @return Array
+     * @return stdClass[]
      */
-    public function getErrors()
+    public function getErrors(): array
     {
         return $this->errors;
     }
 
     /**
-     * Determine if error(s) occured
-     * @return boolean
+     * Determine if error(s) occurred
+     * @return bool
      */
-    public function hasErrors()
+    public function hasErrors(): bool
     {
         return empty($this->errors);
     }
 
     /**
      * Clear errors
-     * @return \FwsMailchimp\AbstractMailchimp
+     * @return AbstractMailchimp
      */
-    public function clearErrors()
+    public function clearErrors(): AbstractMailchimp
     {
-        $this->errors = array();
+        $this->errors = [];
         return $this;
     }
 
@@ -195,7 +164,7 @@ abstract class AbstractMailchimp
      * Gets the client IP address
      * @return string
      */
-    public function getClientIpAddress()
+    public function getClientIpAddress(): string
     {
         return $this->clientIpAddress;
     }
@@ -204,7 +173,7 @@ abstract class AbstractMailchimp
      * Get mailchimp client class
      * @return Mailchimp
      */
-    protected function getClient()
+    protected function getClient(): Mailchimp
     {
         return $this->client;
     }
@@ -214,109 +183,109 @@ abstract class AbstractMailchimp
      * @param string $var
      * @return string
      */
-    protected function md5Hash($var)
+    protected function md5Hash(string $var): string
     {
         return md5(strtolower($var));
     }
 
     /**
      * Convert array to csv string
-     * @param array $array
+     * @param array<string|int, mixed> $array
      * @return string
      */
-    protected function arrayToCsv(Array $array)
+    protected function arrayToCsv(array $array): string
     {
         return implode(', ', $array);
     }
 
     /**
      * Get reflection hydrator
-     * @return HydratorInterface
+     * @return ReflectionHydrator
      */
-    protected function getHydrator(): HydratorInterface
+    protected function getHydrator(): ReflectionHydrator
     {
         return $this->hydrator;
     }
 
     /**
      * Log error
-     * @param string $apiurl
+     * @param string $apiUrl
      * @param string $method
-     * @param Parameters $parameters
+     * @param ParametersInterface<string, mixed> $parameters
      */
-    private function logError($apiurl, $method, Parameters $parameters): void
+    private function logError(string $apiUrl, string $method, ParametersInterface $parameters): void
     {
-        $this->errors[] = array(
-            'apiurl' => $apiurl,
+        $this->errors[] = (object) [
+            'apiUrl' => $apiUrl,
             'method' => $method,
             'parameters' => $parameters->toArray(),
             'response' => $this->getResponse(),
-        );
+        ];
     }
 
     /**
      * Perform curl GET call
-     * @param string $apiurl
+     * @param string $apiUrl
      * @return boolean
      */
-    protected function get($apiurl): bool
+    protected function get(string $apiUrl): bool
     {
-        return $this->call($apiurl, Request::METHOD_GET, $this->parameters);
+        return $this->call($apiUrl, Request::METHOD_GET, $this->parameters);
     }
 
     /**
      * Perform curl DELETE call
-     * @param string $apiurl
+     * @param string $apiUrl
      * @return boolean
      */
-    protected function delete($apiurl): bool
+    protected function delete(string $apiUrl): bool
     {
-        return $this->call($apiurl, Request::METHOD_DELETE, $this->parameters);
+        return $this->call($apiUrl, Request::METHOD_DELETE, $this->parameters);
     }
 
     /**
      * Perform curl POST call
-     * @param string $apiurl
+     * @param string $apiUrl
      * @return boolean
      */
-    protected function post($apiurl): bool
+    protected function post(string $apiUrl): bool
     {
-        return $this->call($apiurl, Request::METHOD_POST, $this->parameters);
+        return $this->call($apiUrl, Request::METHOD_POST, $this->parameters);
     }
 
     /**
      * Perform curl PATCH call
-     * @param string $apiurl
+     * @param string $apiUrl
      * @return boolean
      */
-    protected function patch($apiurl): bool
+    protected function patch(string $apiUrl): bool
     {
-        return $this->call($apiurl, Request::METHOD_PATCH, $this->parameters);
+        return $this->call($apiUrl, Request::METHOD_PATCH, $this->parameters);
     }
 
     /**
      * Perform curl PUT call
-     * @param string $apiurl
+     * @param string $apiUrl
      * @return boolean
      */
-    protected function put($apiurl): bool
+    protected function put(string $apiUrl): bool
     {
-        return $this->call($apiurl, Request::METHOD_PUT, $this->parameters);
+        return $this->call($apiUrl, Request::METHOD_PUT, $this->parameters);
     }
 
     /**
      * Call mailchimp api via \FwsMailchimp\Client\Mailchimp
-     * @param string $apiurl
+     * @param string $apiUrl
      * @param string $method
-     * @param Parameters $parameters
+     * @param ParametersInterface<string, mixed> $parameters
      * @return boolean
      */
-    private function call($apiurl, $method, Parameters $parameters): bool
+    private function call(string $apiUrl, string $method, ParametersInterface $parameters): bool
     {
-        if ($this->client->call($apiurl, $method, $parameters)) {
+        if ($this->client->call($apiUrl, $method, $parameters)) {
             return true;
         } else {
-            $this->logError($apiurl, $method, $parameters);
+            $this->logError($apiUrl, $method, $parameters);
             return false;
         }
     }

@@ -2,12 +2,13 @@
 
 namespace FwsMailchimp\Client;
 
-use Laminas\Stdlib\Parameters;
 use Laminas\Http\Client;
 use Laminas\Http\Client\Adapter\Curl;
 use Laminas\Http\Request;
 use Laminas\Http\Response;
 use Laminas\Json\Json;
+use Laminas\Stdlib\ParametersInterface;
+use stdClass;
 
 /**
  * Mailchimp Client Class
@@ -16,13 +17,13 @@ use Laminas\Json\Json;
  */
 class Mailchimp
 {
-    const ENC_JSON = 'application/json';
+    public const ENC_JSON = 'application/json';
 
     /**
      * 
      * @var Response|null
      */
-    private ?Response $response;
+    private ?Response $response = null;
 
     /**
      * 
@@ -35,7 +36,7 @@ class Mailchimp
      * @param string $apiKey
      * @return $this
      */
-    public function setApiKey(string $apiKey)
+    public function setApiKey(string $apiKey): static
     {
         $this->apiKey = $apiKey;
         return $this;
@@ -43,16 +44,14 @@ class Mailchimp
 
     /**
      *
-     * @param string $apiurl
+     * @param string $apiUrl
      * @param string $method
-     * @param Parameters $parameters @see http://developer.mailchimp.com/documentation/mailchimp/reference/lists/members/
+     * @param ParametersInterface<string, mixed> $parameters @see http://developer.mailchimp.com/documentation/mailchimp/reference/lists/members/
      * @return boolean
      */
-    public function call($apiurl, $method, Parameters $parameters)
+    public function call(string $apiUrl, string $method, ParametersInterface $parameters): bool
     {
-        $client = new Client($apiurl, array(
-            'adapter' => Curl::class,
-        ));
+        $client = new Client($apiUrl, ['adapter' => Curl::class]);
         $client->setEncType(self::ENC_JSON);
         $client->setMethod($method);
         $client->setAuth('user', $this->apiKey);
@@ -73,14 +72,14 @@ class Mailchimp
 
     /**
      * Get the response body as an array
-     * @return array|null
+     * @return array
      */
-    public function getRespose(): ?array
+    public function getResponse(): array
     {
         if ($this->response instanceof Response) {
-            return Json::decode($this->response->getBody(), true);
+            return Json::decode($this->response->getBody(), Json::TYPE_ARRAY);
         }
-        return null;
+        return [];
     }
 
 }

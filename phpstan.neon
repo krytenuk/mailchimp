@@ -1,0 +1,12 @@
+parameters:
+	level: 6
+	paths:
+		- src
+		- config
+	ignoreErrors:
+		-
+		    message: '#Call to an undefined method Laminas\\Http\\Client\\Adapter\\AdapterInterface::setCurlOption\(\)#'
+		    path: src/Client/Mailchimp.php
+		-
+		    message: '#Unreachable statement - code above always terminates#'
+		    path: src/Entities/Members.php

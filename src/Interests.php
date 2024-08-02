@@ -4,8 +4,11 @@ namespace FwsMailchimp;
 
 use FwsMailchimp\Client\Mailchimp;
 use FwsMailchimp\Collections\ArrayCollection;
+use FwsMailchimp\Entities\EntityInterface;
 use FwsMailchimp\Entities\Interests as InterestsEntity;
 use FwsMailchimp\Entities\InterestCategories as InterestCategoryEntity;
+use FwsMailchimp\Exception\NoApiKeyException;
+use stdClass;
 
 /**
  * Mailchimp interests functions
@@ -15,15 +18,12 @@ use FwsMailchimp\Entities\InterestCategories as InterestCategoryEntity;
 class Interests extends AbstractMailchimp
 {
 
-    /**
-     *
-     * @var ArrayCollection
-     */
     private ArrayCollection $interestCategories;
 
     /**
      * @param Mailchimp $client
-     * @param array $config
+     * @param array<int|string, mixed> $config
+     * @throws NoApiKeyException
      */
     public function __construct(Mailchimp $client, array $config)
     {
@@ -49,9 +49,9 @@ class Interests extends AbstractMailchimp
 
     /**
      * List interest categories (groups) in list
-     * @return ArrayCollection|null
+     * @return ArrayCollection
      */
-    public function listInterestCategories(): ?ArrayCollection
+    public function listInterestCategories(): ArrayCollection
     {
         return $this->interestCategories;
     }
@@ -59,14 +59,15 @@ class Interests extends AbstractMailchimp
     /**
      * Get interest category (group)
      * @param string $interestCategoryId
-     * @return InterestCategoryEntity|null
+     * @return EntityInterface|null
      */
-    public function getInterestCategory(string $interestCategoryId): ?InterestCategoryEntity
+    public function getInterestCategory(string $interestCategoryId): EntityInterface|null
     {
         if ($this->interestCategories->isEmpty()) {
             return null;
         }
 
+        /** @var InterestCategoryEntity $category */
         foreach ($this->interestCategories as $category) {
             if ($category->getId() === $interestCategoryId) {
                 return $category;
@@ -81,12 +82,13 @@ class Interests extends AbstractMailchimp
      * @param string $interestId
      * @return InterestCategoryEntity|null
      */
-    public function findInterestCategory(string $interestId): ?InterestCategoryEntity
+    public function findInterestCategory(string $interestId): InterestCategoryEntity|null
     {
         if ($this->interestCategories->isEmpty()) {
             return null;
         }
 
+        /** @var InterestCategoryEntity $category */
         foreach ($this->interestCategories as $category) {
             if ($category->getInterests()->isEmpty()) {
                 continue;
@@ -106,12 +108,13 @@ class Interests extends AbstractMailchimp
      * @param string $interestCategoryId
      * @return ArrayCollection|null
      */
-    public function listCategoryInterests(string $interestCategoryId): ?ArrayCollection
+    public function listCategoryInterests(string $interestCategoryId): ArrayCollection|null
     {
         if ($this->interestCategories->isEmpty()) {
             return null;
         }
-        
+
+        /** @var InterestCategoryEntity $category */
         foreach ($this->interestCategories as $category) {
             if ($category->getId() === $interestCategoryId) {
                 return $category->getInterests();
@@ -126,17 +129,19 @@ class Interests extends AbstractMailchimp
      * @param string $interestId
      * @return InterestsEntity|null
      */
-    public function getInterest(string $interestId): ?InterestsEntity
+    public function getInterest(string $interestId): InterestsEntity|null
     {
         
         if ($this->interestCategories->isEmpty()) {
             return null;
         }
 
+        /** @var InterestCategoryEntity $category */
         foreach ($this->interestCategories as $category) {
             if ($category->getInterests()->isEmpty()) {
                 continue;
             }
+            /** @var InterestsEntity $interest */
             foreach ($category->getInterests() as $interest) {
                 if ($interest->getId() === $interestId) {
                     return $interest;
@@ -157,15 +162,15 @@ class Interests extends AbstractMailchimp
         }
 
         $response = $this->getResponse();
-        if (isset($response['categories']) === false || empty($response['categories']) === true) {
+        if (!is_array($response->categories) || empty($response->categories)) {
             return;
         }
 
         $hydrator = $this->getHydrator();
-        foreach ($response['categories'] as $category) {
+        foreach ($response->categories as $category) {
             $entity = new InterestCategoryEntity();
-            $category['interests'] = $this->loadCategoryInterests($category['id']);
-            $hydrator->hydrate($category, $entity);
+            $category->interests = $this->loadCategoryInterests($category->id);
+            $hydrator->hydrate((array) $category, $entity);
             $this->interestCategories->add($entity);
         }
     }
@@ -175,7 +180,7 @@ class Interests extends AbstractMailchimp
      * @param string $interestCategoryId
      * @return ArrayCollection
      */
-    private function loadCategoryInterests($interestCategoryId): ArrayCollection
+    private function loadCategoryInterests(string $interestCategoryId): ArrayCollection
     {
         $collection = new ArrayCollection();
         if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/interest-categories/' . $interestCategoryId . '/interests') === false) {
@@ -183,14 +188,15 @@ class Interests extends AbstractMailchimp
         }
 
         $response = $this->getResponse();
-        if (array_key_exists('interests', $response) === false || is_array($response['interests']) === false || empty($response['interests']) === true) {
+        if (is_array($response->interests) || empty($response->interests)) {
             return $collection;
         }
         
         $hydrator = $this->getHydrator();
-        foreach ($response['interests'] as $interest) {
+        /* @var stdClass $interest */
+        foreach ($response->interests as $interest) {
             $entity = new InterestsEntity();
-            $hydrator->hydrate($interest, $entity);
+            $hydrator->hydrate((array) $interest, $entity);
             $collection->add($entity);
         }
         return $collection;

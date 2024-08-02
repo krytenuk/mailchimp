@@ -24,13 +24,13 @@ class Locations implements EntityInterface
 
     /**
      *
-     * @var int
+     * @var int|null
      */
     private ?int $gmtoff = null;
 
     /**
      *
-     * @var int
+     * @var int|null
      */
     private ?int $dstoff = null;
 
@@ -48,11 +48,11 @@ class Locations implements EntityInterface
 
     /**
      * 
-     * @return void
+     * @return null
      */
-    public function getId(): void
+    public function getId(): mixed
     {
-        // not used, required by EntityInterface
+        return null;
     }
 
     /**
@@ -75,7 +75,7 @@ class Locations implements EntityInterface
 
     /**
      *
-     * @return integer
+     * @return int|null
      */
     public function getGmtoff(): ?int
     {
@@ -84,7 +84,7 @@ class Locations implements EntityInterface
 
     /**
      *
-     * @return integer
+     * @return int|null
      */
     public function getDstoff(): ?int
     {
@@ -132,8 +132,8 @@ class Locations implements EntityInterface
     }
 
     /**
-     * Get entity as an array as used by Mailchimp API
-     * @return array
+     * Used by Mailchimp API
+     * @return array{latitude: float, longitude: float}
      */
     public function toArray(): array
     {

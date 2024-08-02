@@ -2,6 +2,8 @@
 
 namespace FwsMailchimp\Entities;
 
+use DateTimeInterface;
+use Exception;
 use FwsMailchimp\Collections\ArrayCollection;
 use FwsMailchimp\Entities\Locations as LocationEntity;
 use FwsMailchimp\Entities\MemberStats as MemberStatsEntity;
@@ -18,129 +20,54 @@ use FwsMailchimp\Exception\IncorrectTypeException;
 class Members implements EntityInterface
 {
 
-    /**
-     *
-     * @var string
-     */
     private string $id = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $emailAddress = '';
 
-    /**
-     * 
-     * @var array
-     */
     private array $mergeFields = [];
 
-    /**
-     *
-     * @var string
-     */
     private string $uniqueEmailId = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $emailType = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $status = '';
 
-    /**
-     *
-     * @var ArrayCollection
-     */
     private ArrayCollection $interestCategories;
 
     /**
      *
-     * @var array
+     * @var bool[]
      */
     private array $interests = [];
 
-    /**
-     *
-     * @var MemberStatsEntity
-     */
+
     private MemberStatsEntity $stats;
 
-    /**
-     *
-     * @var string
-     */
     private string $ipSignup = '';
 
-    /**
-     *
-     * @var DateTime|string
-     */
-    private $timestampSignup = '';
+    private string|DateTimeInterface $timestampSignup = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $ipOpt = '';
 
-    /**
-     *
-     * @var DateTime|string
-     */
-    private $timestampOpt = '';
+    private string|DateTimeInterface $timestampOpt = '';
 
-    /**
-     * 
-     * @var int|null
-     */
-    private ?int $memberRating;
+    private int|null $memberRating = null;
 
-    /**
-     *
-     * @var DateTime|string
-     */
-    private $lastChanged = '';
+    private DateTimeInterface|string $lastChanged = '';
 
-    /**
-     *
-     * @var LanguageEntity
-     */
     private LanguageEntity $language;
 
-    /**
-     *
-     * @var bool
-     */
     private bool $vip = false;
 
-    /**
-     *
-     * @var string
-     */
     private string $emailClient = '';
 
-    /**
-     *
-     * @var LocationEntity
-     */
     private LocationEntity $location;
 
-    /**
-     *
-     * @var string|null
-     */
     private string $listId = '';
 
     /**
      *
-     * @var array
+     * @var string[]
      */
     private array $validSubscribeStatus = [
         'subscribed',
@@ -151,8 +78,8 @@ class Members implements EntityInterface
     ];
 
     /**
-     * 
-     * @var array
+     *
+     * @var string[]
      */
     private array $validEmailTypes = [
         'html',
@@ -168,8 +95,8 @@ class Members implements EntityInterface
     }
 
     /**
-     *
-     * @return array
+     * Get members valid subscribe status
+     * @return string[]
      */
     public function getValidSubscribeStates(): array
     {
@@ -177,8 +104,8 @@ class Members implements EntityInterface
     }
 
     /**
-     *
-     * @return array
+     * Get members valid email types
+     * @return string[]
      */
     public function getValidEmailTypes(): array
     {
@@ -186,16 +113,7 @@ class Members implements EntityInterface
     }
 
     /**
-     *
-     * @return string
-     */
-    public function getId(): string
-    {
-        return $this->id;
-    }
-
-    /**
-     *
+     * Get members email address
      * @return string
      */
     public function getEmailAddress(): string
@@ -204,169 +122,7 @@ class Members implements EntityInterface
     }
 
     /**
-     *
-     * @return array
-     */
-    public function getMergeFields(): array
-    {
-        return $this->mergeFields;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getUniqueEmailId(): string
-    {
-        return $this->uniqueEmailId;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getEmailType(): string
-    {
-        return $this->emailType;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getStatus(): string
-    {
-        return $this->status;
-    }
-
-    /**
-     *
-     * @return ArrayCollection
-     */
-    public function getInterestCategories(): ArrayCollection
-    {
-        return $this->interestCategories;
-    }
-
-    /**
-     *
-     * @return array
-     */
-    public function getInterests(): array
-    {
-        return (array) $this->interests;
-    }
-
-    /**
-     *
-     * @return MemberStatsEntity
-     */
-    public function getStats(): MemberStatsEntity
-    {
-        return $this->stats;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getIpSignup(): string
-    {
-        return $this->ipSignup;
-    }
-
-    /**
-     *
-     * @return DateTime|null|string
-     */
-    public function getTimestampSignup()
-    {
-        return $this->timestampSignup;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getIpOpt(): string
-    {
-        return $this->ipOpt;
-    }
-
-    /**
-     *
-     * @return DateTime|null|string
-     */
-    public function getTimestampOpt()
-    {
-        return $this->timestampOpt;
-    }
-
-    /**
-     *
-     * @return integer
-     */
-    public function getMemberRating(): int
-    {
-        return (int) $this->memberRating;
-    }
-
-    /**
-     *
-     * @return DateTime|null|string
-     */
-    public function getLastChanged()
-    {
-        return $this->lastChanged;
-    }
-
-    /**
-     *
-     * @return LanguageEntity
-     */
-    public function getLanguage(): LanguageEntity
-    {
-        return $this->language;
-    }
-
-    /**
-     *
-     * @return boolean
-     */
-    public function isVip(): bool
-    {
-        return (bool) $this->vip;
-    }
-
-    /**
-     *
-     * @return string
-     */
-    public function getEmailClient(): string
-    {
-        return $this->emailClient;
-    }
-
-    /**
-     *
-     * @return LocationEntity
-     */
-    public function getLocation(): LocationEntity
-    {
-        return $this->location;
-    }
-
-    /**
-     * 
-     * @return string
-     */
-    public function getListId(): string
-    {
-        return $this->listId;
-    }
-
-    /**
-     *
+     * Set the members email address
      * @param string $emailAddress
      * @return Members
      */
@@ -377,8 +133,17 @@ class Members implements EntityInterface
     }
 
     /**
-     *
-     * @param array $mergeFields
+     * Get the members merge fields data
+     * @return array<string, string>
+     */
+    public function getMergeFields(): array
+    {
+        return $this->mergeFields;
+    }
+
+    /**
+     * Set the members merge fields data
+     * @param array<string, string> $mergeFields
      * @return Members
      */
     public function setMergeFields(array $mergeFields = []): Members
@@ -388,9 +153,27 @@ class Members implements EntityInterface
     }
 
     /**
-     *
+     * Get the unique email id
+     * @return string
+     */
+    public function getUniqueEmailId(): string
+    {
+        return $this->uniqueEmailId;
+    }
+
+    /**
+     * Get the email type
+     * @return string
+     */
+    public function getEmailType(): string
+    {
+        return $this->emailType;
+    }
+
+    /**
+     * Set the email type
      * @param string $emailType
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      * @throws IncorrectTypeException
      */
     public function setEmailType(string $emailType): Members
@@ -399,13 +182,22 @@ class Members implements EntityInterface
             $this->emailType = $emailType;
             return $this;
         }
-        throw new IncorrectTypeException(sprintf('Invalid email type, expected %s'), implode(', ', $this->validEmailTypes));
+        throw new IncorrectTypeException(sprintf('Invalid email type, expected %s', implode(', ', $this->validEmailTypes)));
     }
 
     /**
-     *
+     * Get the members status
+     * @return string
+     */
+    public function getStatus(): string
+    {
+        return $this->status;
+    }
+
+    /**
+     * Set the members status
      * @param string $status
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      * @throws IncorrectStatusException
      */
     public function setStatus(string $status): Members
@@ -414,56 +206,50 @@ class Members implements EntityInterface
             $this->status = $status;
             return $this;
         } else {
-            throw new IncorrectStatusException(sprintf('Invalid status, expected %s'), implode(', ', $this->validSubscribeStatus));
+            throw new IncorrectStatusException(sprintf('Invalid status, expected %s', implode(', ', $this->validSubscribeStatus)));
         }
     }
 
     /**
-     * Sets the group interest to true to show member interested
-     * @param string|array $interest
-     * @return \FwsMailchimp\Entities\Members
+     * Get members interest categories
+     * @return ArrayCollection
      */
-    public function setInterested($interest): Members
+    public function getInterestCategories(): ArrayCollection
     {
-        if (is_string($interest) === true) {
-            $interest = [$interest];
-        }
-        
-        if (is_array($interest) === false) {
-            return $this;
-        }
-        
-        foreach ($interest as $interestId) {
-            $this->interests[$interestId] = true;
-        }
-        return $this;
+        return $this->interestCategories;
     }
 
     /**
-     * Sets the group interest to false to show member not interested
-     * @param string|array $interest
-     * @return \FwsMailchimp\Entities\Members
+     * Get members interests
+     * @return bool[]
      */
-    public function unsetInterested($interest): Members
+    public function getInterests(): array
     {
-        if (is_string($interest) === true) {
-            $interest = [$interest];
-        }
-        
-        if (is_array($interest) === false) {
-            return $this;
-        }
-        
-        foreach ($interest as $interestId) {
-            $this->interests[$interestId] = false;
-        }
-        return $this;
+        return $this->interests;
     }
 
     /**
-     *
+     * Get the members stats entity
+     * @return MemberStatsEntity
+     */
+    public function getStats(): MemberStatsEntity
+    {
+        return $this->stats;
+    }
+
+    /**
+     * Get members signup IP address
+     * @return string
+     */
+    public function getIpSignup(): string
+    {
+        return $this->ipSignup;
+    }
+
+    /**
+     * Set members signup IP address
      * @param string $ipSignup
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      */
     public function setIpSignup(string $ipSignup): Members
     {
@@ -472,32 +258,45 @@ class Members implements EntityInterface
     }
 
     /**
-     * 
-     * @param DateTime $timestampSignup
+     * Get members signup date time
+     * @return DateTimeInterface|string
+     */
+    public function getTimestampSignup(): DateTimeInterface|string
+    {
+        return $this->timestampSignup;
+    }
+
+    /**
+     * Get members signup date time
+     * @param DateTimeInterface|string $timestampSignup
      * @return Members
      * @throws IncorrectTypeException
+     * @throws Exception
      */
-    public function setTimestampSignup($timestampSignup): Members
+    public function setTimestampSignup(DateTimeInterface|string $timestampSignup): Members
     {
-        if ($timestampSignup instanceof DateTime) {
+        if ($timestampSignup instanceof DateTimeInterface) {
             $this->timestampSignup = $timestampSignup;
             return $this;
         }
 
-        if (is_string($timestampSignup)) {
-            $this->timestampSignup = new DateTime($timestampSignup);
-            return $this;
-        }
-
-        throw new IncorrectTypeException(sprintf(
-                                'Invalid timestamp, expected string or DateTime object, recieved %s',
-                                is_object($timestampSignup) ? get_class($timestampSignup) : gettype($timestampSignup)));
+        $this->timestampSignup = new DateTime($timestampSignup);
+        return $this;
     }
 
     /**
-     *
+     * Get members opt-in IP address
+     * @return string
+     */
+    public function getIpOpt(): string
+    {
+        return $this->ipOpt;
+    }
+
+    /**
+     * Set members opt-in IP address
      * @param string $ipOpt
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      */
     public function setIpOpt(string $ipOpt): Members
     {
@@ -506,32 +305,64 @@ class Members implements EntityInterface
     }
 
     /**
-     * 
-     * @param DateTime $timestampOpt
-     * @return Members
-     * @throws IncorrectTypeException
+     *
+     * @return DateTimeInterface|string
      */
-    public function setTimestampOpt($timestampOpt): Members
+    public function getTimestampOpt(): DateTimeInterface|string
     {
-        if ($timestampOpt instanceof DateTime) {
-            $this->timestampOpt = $timestampOpt;
-            return $this;
-        }
-        
-        if (is_string($timestampOpt)) {
-            $this->timestampOpt = new DateTime($timestampOpt);
-            return $this;
-        } 
-        
-        throw new IncorrectTypeException(sprintf(
-                                    'Invalid timestamp, expected string or DateTime object, recieved %s',
-                                    is_object($timestampOpt) ? get_class($timestampOpt) : gettype($timestampOpt)));
+        return $this->timestampOpt;
     }
 
     /**
-     *
+     * Get members opt-in date time
+     * @param DateTimeInterface|string $timestampOpt
+     * @return Members
+     * @throws IncorrectTypeException
+     * @throws Exception
+     */
+    public function setTimestampOpt(DateTimeInterface|string $timestampOpt): Members
+    {
+        if ($timestampOpt instanceof DateTimeInterface) {
+            $this->timestampOpt = $timestampOpt;
+            return $this;
+        }
+
+        $this->timestampOpt = new DateTime($timestampOpt);
+
+        return $this;
+    }
+
+    /**
+     * Get member rating
+     * @return integer
+     */
+    public function getMemberRating(): int
+    {
+        return (int)$this->memberRating;
+    }
+
+    /**
+     * Get member record last changed date time
+     * @return DateTimeInterface|string
+     */
+    public function getLastChanged(): DateTimeInterface|string
+    {
+        return $this->lastChanged;
+    }
+
+    /**
+     * Get members language entity
+     * @return LanguageEntity
+     */
+    public function getLanguage(): LanguageEntity
+    {
+        return $this->language;
+    }
+
+    /**
+     * Set members language entity
      * @param LanguageEntity $language
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      */
     public function setLanguage(LanguageEntity $language): Members
     {
@@ -540,9 +371,18 @@ class Members implements EntityInterface
     }
 
     /**
-     *
+     * Is VIP member
+     * @return boolean
+     */
+    public function isVip(): bool
+    {
+        return $this->vip;
+    }
+
+    /**
+     * Set VIP member
      * @param boolean $vip
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      */
     public function setVip(bool $vip): Members
     {
@@ -551,9 +391,27 @@ class Members implements EntityInterface
     }
 
     /**
-     *
+     * Get email client
+     * @return string
+     */
+    public function getEmailClient(): string
+    {
+        return $this->emailClient;
+    }
+
+    /**
+     * Get members location entity
+     * @return LocationEntity
+     */
+    public function getLocation(): LocationEntity
+    {
+        return $this->location;
+    }
+
+    /**
+     * Set members location entity
      * @param LocationEntity $location
-     * @return \FwsMailchimp\Entities\Members
+     * @return Members
      */
     public function setLocation(LocationEntity $location): Members
     {
@@ -562,12 +420,55 @@ class Members implements EntityInterface
     }
 
     /**
-     * Convert Members object to array for use in mailchimp API
-     * @return array
+     * Get list id
+     * @return string
+     */
+    public function getListId(): string
+    {
+        return $this->listId;
+    }
+
+    /**
+     * Sets the group interest to true to show member interested
+     * @param string|string[] $interest
+     * @return Members
+     */
+    public function setInterested(array|string $interest): Members
+    {
+        if (is_string($interest)) {
+            $interest = [$interest];
+        }
+
+        foreach ($interest as $interestId) {
+            $this->interests[$interestId] = true;
+        }
+        return $this;
+    }
+
+    /**
+     * Sets the group interest to false in order to show member not interested
+     * @param string|string[] $interest
+     * @return Members
+     */
+    public function unsetInterested(array|string $interest): Members
+    {
+        if (is_string($interest)) {
+            $interest = [$interest];
+        }
+
+        foreach ($interest as $interestId) {
+            $this->interests[$interestId] = false;
+        }
+        return $this;
+    }
+
+    /**
+     *  Used for Mailchimp API
+     * @return string[]
      */
     public function toArray(): array
     {
-        $array = array(
+        $array = [
             'email_address' => $this->emailAddress,
             'email_type' => $this->emailType,
             'status' => $this->status,
@@ -577,8 +478,9 @@ class Members implements EntityInterface
             'vip' => $this->vip,
             'location' => $this->location->toArray(),
             'ip_signup' => $this->ipSignup,
-            'ip_opt' => $this->ipOpt,
-        );
+            'ip_opt' => $this->ipOpt
+        ];
+
         if ($this->timestampSignup instanceof DateTime) {
             $array['timestamp_signup'] = $this->formatDate($this->timestampSignup);
         } else {
@@ -589,15 +491,25 @@ class Members implements EntityInterface
         } else {
             $array['timestamp_opt'] = $this->timestampSignup;
         }
+
         return $array;
     }
 
     /**
-     * Format date from \DateTime object
-     * @param DateTime $date
+     *
+     * @return string|null
+     */
+    public function getId(): string|null
+    {
+        return $this->id;
+    }
+
+    /**
+     * Format date from DateTime object
+     * @param DateTimeInterface $date
      * @return string
      */
-    private function formatDate(DateTime $date): string
+    private function formatDate(DateTimeInterface $date): string
     {
         return $date->format(DATE_ATOM);
     }

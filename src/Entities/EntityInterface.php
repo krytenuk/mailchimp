@@ -3,15 +3,21 @@
 namespace FwsMailchimp\Entities;
 
 /**
- * Mailchimp entity interface
+ * Mailchimp's entity interface
  *
  * @author Garry Childs (Freedom Web Services)
  */
 interface EntityInterface
 {
 
-    public function getId();
+    /**
+     * @return mixed
+     */
+    public function getId(): mixed;
 
-    public function toArray();
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(): array;
 
 }

@@ -10,35 +10,27 @@ namespace FwsMailchimp\Entities;
 class MemberStats implements EntityInterface
 {
 
-    /**
-     *
-     * @var float
-     */
     private float $avgOpenRate = 0.00;
 
-    /**
-     *
-     * @var float
-     */
     private float $avgClickRate = 0.00;
 
-    public function getId()
+    public function getId(): int|null
     {
         return null; // not used, required by EntityInterface
     }
 
     /**
-     *
-     * @return number
+     * Get average open rate
+     * @return float
      */
     public function getAvgOpenRate(): float
     {
-        return (float) $this->avgOpenRate;
+        return $this->avgOpenRate;
     }
 
     /**
-     *
-     * @return number
+     * Get average click rate
+     * @return float
      */
     public function getAvgClickRate(): float
     {
@@ -46,10 +38,10 @@ class MemberStats implements EntityInterface
     }
 
     /**
-     * Convert Members object to array for use in mailchimp API
+     * Used for Mailchimp API
      * @return array
      */
-    public function toArray()
+    public function toArray(): array
     {
         return []; // not used, required by EntityInterface
     }

@@ -10,16 +10,8 @@ namespace FwsMailchimp\Entities;
 class Interests implements EntityInterface
 {
 
-    /**
-     *
-     * @var string
-     */
     private string $id = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $categoryId = '';
 
     /**
@@ -101,8 +93,8 @@ class Interests implements EntityInterface
     }
 
     /**
-     *
-     * @return array
+     * Used for Mailchimp API
+     * @return array<string, int>
      */
     public function toArray(): array
     {

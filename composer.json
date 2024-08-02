@@ -1,41 +1,48 @@
 {
-    "name": "krytenuk/mailchimp",
-    "description": "Laminas module for using Mailchimp API",
-    "require": {
-        "php": "^8.1",
-        "laminas/laminas-stdlib": "^3.6",
-        "laminas/laminas-http": "^2.15",
-        "laminas/laminas-hydrator": "^4.3",
-        "laminas/laminas-json": "^3.3",
-        "laminas/laminas-servicemanager": "^3.10"
-    },
-    "authors": [{
-            "name": "Garry Childs",
-            "email": "info@freedomwebservices.net",
-            "homepage": "https://www.freedomwebservices.net/"
-        }],
-    "keywords": ["Laminas", "Mailchimp", "Freedom"],
-    "autoload": {
-        "psr-4": {
-            "FwsMailchimp\\": "src/"
-        }
-    },
-    "license": "BSD-3-Clause",
-    "type": "module",
-    "homepage": "https://github.com/krytenuk/mailchimp",
-    "extra": {
-        "zf": {
-            "module": "FwsMailchimp"
-        }
-    },
-    "funding": [
-        {
-            "type": "other",
-            "url": "https://www.freedomwebservices.net/laminas/fws-mailchimp#donate"
-        }
-    ],
-    "require-dev": {
-        "phpstan/phpstan": "^1.10",
-        "rector/rector": "^0.15.23"
+  "name": "krytenuk/mailchimp",
+  "description": "Laminas module for using Mailchimp API",
+  "require": {
+    "php": "^8.1",
+    "laminas/laminas-stdlib": "^3.6",
+    "laminas/laminas-http": "^2.15",
+    "laminas/laminas-hydrator": "^4.3",
+    "laminas/laminas-json": "^3.3",
+    "laminas/laminas-servicemanager": "^3.10",
+    "ext-curl": "*"
+  },
+  "authors": [
+    {
+      "name": "Garry Childs",
+      "email": "info@freedomwebservices.net",
+      "homepage": "https://www.freedomwebservices.net/"
     }
+  ],
+  "keywords": [
+    "Laminas",
+    "Mailchimp",
+    "Freedom"
+  ],
+  "autoload": {
+    "psr-4": {
+      "FwsMailchimp\\": "src/"
+    }
+  },
+  "license": "BSD-3-Clause",
+  "type": "module",
+  "homepage": "https://github.com/krytenuk/mailchimp",
+  "extra": {
+    "zf": {
+      "module": "FwsMailchimp"
+    }
+  },
+  "funding": [
+    {
+      "type": "other",
+      "url": "https://www.freedomwebservices.net/laminas/fws-mailchimp#donate"
+    }
+  ],
+  "require-dev": {
+    "phpstan/phpstan": "^1.10",
+    "rector/rector": "^0.15.23"
+  }
 }

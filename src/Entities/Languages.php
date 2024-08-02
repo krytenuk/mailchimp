@@ -10,17 +10,12 @@ namespace FwsMailchimp\Entities;
 class Languages implements EntityInterface
 {
 
-    /**
-     *
-     * @var string
-     */
-    private $id = '';
+    private string $id = '';
 
     /**
-     *
-     * @var array
+     * @var string[]
      */
-    private $validLanguageCodes = array(
+    private array $validLanguageCodes = [
         'en' => 'English',
         'ar' => 'Arabic',
         'af' => 'Afrikaans',
@@ -41,7 +36,8 @@ class Languages implements EntityInterface
         'el' => 'Greek',
         'he' => 'Hebrew',
         'hi' => 'Hindi',
-        'hu' => 'Hungarian',#
+        'hu' => 'Hungarian',
+        #
         'is' => 'Icelandic',
         'id' => 'Indonesian',
         'ga' => 'Irish',
@@ -72,7 +68,7 @@ class Languages implements EntityInterface
         'tr' => 'Turkish',
         'uk' => 'Ukrainian',
         'vi' => 'Vietnamese',
-    );
+    ];
 
     /**
      * Get the language code
@@ -97,7 +93,7 @@ class Languages implements EntityInterface
 
     /**
      * Get all valid language codes
-     * @return array
+     * @return string[]
      */
     public function getValidLanguageCodes(): array
     {
@@ -116,8 +112,8 @@ class Languages implements EntityInterface
     }
 
     /**
-     *
-     * @return array
+     * Used for Mailchimp API
+     * @return array{id: string, language: string}
      */
     public function toArray(): array
     {

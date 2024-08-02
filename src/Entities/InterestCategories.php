@@ -14,56 +14,22 @@ class InterestCategories implements EntityInterface
 {
 
     /**
-     *
-     * @var array
+     * @var string[]
      */
-    private $validTypes = array(
-        'checkboxes',
-        'dropdown',
-        'radio',
-        'hidden',
-    );
+    private array $validTypes = ['checkboxes', 'dropdown', 'radio', 'hidden'];
 
-    /**
-     *
-     * @var string
-     */
     private string $id = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $listId = '';
 
-    /**
-     *
-     * @var string
-     */
     private string $title = '';
 
-    /**
-     *
-     * @var int
-     */
     private int $displayOrder = 0;
 
-    /**
-     *
-     * @var string
-     */
     private string $type = '';
 
-    /**
-     *
-     * @var ArrayCollection
-     */
     private ArrayCollection $interests;
 
-    /**
-     * Initialize entity
-     * @return void
-     */
     public function __construct()
     {
         $this->interests = new ArrayCollection();
@@ -71,7 +37,7 @@ class InterestCategories implements EntityInterface
 
     /**
      * Get all valid category types
-     * @return array
+     * @return string[]
      */
     public function getValidTypes(): array
     {
@@ -79,7 +45,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get interest category id
      * @return string
      */
     public function getId(): string
@@ -88,7 +54,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get list id
      * @return string
      */
     public function getListId(): string
@@ -97,7 +63,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get interest category title
      * @return string
      */
     public function getTitle(): string
@@ -106,7 +72,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get interest category display order
      * @return int
      */
     public function getDisplayOrder(): int
@@ -115,7 +81,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get interest category type
      * @return string
      */
     public function getType(): string
@@ -124,7 +90,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     *
+     * Get interest category interests
      * @return ArrayCollection
      */
     public function getInterests(): ArrayCollection
@@ -133,7 +99,7 @@ class InterestCategories implements EntityInterface
     }
 
     /**
-     * 
+     *  Add an interest to the interest category
      * @param InterestsEntity $interest
      * @return InterestCategories
      */
@@ -145,15 +111,15 @@ class InterestCategories implements EntityInterface
 
     /**
      * Used for Mailchimp API
-     * @return array
+     * @return array{title: string, display_order: int, type: string}
      */
     public function toArray(): array
     {
-        return array(
+        return [
             'title' => $this->title,
             'display_order' => $this->displayOrder,
-            'type' => $this->type,
-        );
+            'type' => $this->type
+        ];
     }
 
     public function __clone()

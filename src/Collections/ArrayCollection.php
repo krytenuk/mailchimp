@@ -3,13 +3,14 @@
 namespace FwsMailchimp\Collections;
 
 use Iterator;
+use Laminas\Stdlib\ArrayUtils;
 use Traversable;
-use FwsMailchimp\Exception\IncorrectTypeException;
 use FwsMailchimp\Entities\EntityInterface;
 
 /**
  * Collection of mailchimp entities
  *
+ * @implements Iterator<int, EntityInterface>
  * @author User
  */
 class ArrayCollection implements Iterator
@@ -18,36 +19,37 @@ class ArrayCollection implements Iterator
     /**
      * An array containing the entities of this collection.
      *
-     * @var array
+     * @var EntityInterface[]
      */
-    private $elements = array();
+    private array $elements = [];
 
     /**
      *
      * @var integer
      */
-    private $index = 0;
+    private int $index = 0;
 
     /**
      * Initializes a new ArrayCollection.
      *
-     * @param array|Traversable $elements
-     * @throws IncorrectTypeException
+     * @param iterable|null $elements
      */
-    public function __construct($elements = array())
+    public function __construct(iterable $elements = null)
     {
+        if ($elements === null) {
+            return;
+        }
+
         if ($elements instanceof Traversable) {
             $elements = ArrayUtils::iteratorToArray($elements);
         }
-        if (is_array($elements) === false) {
-            throw new IncorrectTypeException(sprintf('%s expects elements to ba an array or Traversable object, recuieved %s'), __METHOD__, is_object($elements) ? get_class($elements) : gettype($elements));
-        }
+
         $this->elements = $elements;
     }
 
     /**
      *
-     * @return array
+     * @return array<int, EntityInterface>
      */
     public function toArray(): array
     {
@@ -140,7 +142,7 @@ class ArrayCollection implements Iterator
      */
     public function count(): int
     {
-        return (int) count($this->elements);
+        return count($this->elements);
     }
 
     /**
@@ -170,7 +172,7 @@ class ArrayCollection implements Iterator
      *
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return empty($this->elements);
     }
@@ -180,7 +182,7 @@ class ArrayCollection implements Iterator
      * @param string $id
      * @return EntityInterface|null
      */
-    public function get($id): ?EntityInterface
+    public function get(string $id): EntityInterface|null
     {
         if (empty($this->elements)) {
             return null;

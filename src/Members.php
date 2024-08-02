@@ -3,10 +3,10 @@
 namespace FwsMailchimp;
 
 use FwsMailchimp\Client\Mailchimp;
-use FwsMailchimp\Interests;
 use FwsMailchimp\Collections\ArrayCollection;
 use FwsMailchimp\Entities\Members as MembersEntity;
 use FwsMailchimp\Entities\InterestCategories as MemberInterestsCategory;
+use FwsMailchimp\Exception\NoApiKeyException;
 use Laminas\Hydrator\Strategy\DateTimeFormatterStrategy;
 
 /**
@@ -16,23 +16,20 @@ use Laminas\Hydrator\Strategy\DateTimeFormatterStrategy;
  */
 class Members extends AbstractMailchimp
 {
-
     /**
      *
-     * @var Interests
-     */
-    private $interests;
-
-    /**
-     * 
      * @param Mailchimp $client
      * @param array $config
      * @param Interests $interests
+     * @throws NoApiKeyException
      */
-    public function __construct(Mailchimp $client, Array $config, Interests $interests)
+    public function __construct(
+        Mailchimp                  $client,
+        array                      $config,
+        private readonly Interests $interests
+    )
     {
         parent::__construct($client, $config);
-        $this->interests = $interests;
 
         $this->hydrator->addStrategy('timestampOpt', new DateTimeFormatterStrategy(DATE_ATOM));
         $this->hydrator->addStrategy('timestampSignup', new DateTimeFormatterStrategy(DATE_ATOM));
@@ -43,7 +40,7 @@ class Members extends AbstractMailchimp
      * Get lists members
      * @return ArrayCollection|null
      */
-    public function listMembers(): ?ArrayCollection
+    public function listMembers(): ArrayCollection|null
     {
         if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members') === false) {
             return null;
@@ -66,7 +63,7 @@ class Members extends AbstractMailchimp
      * @param string $emailAddress
      * @return MembersEntity|null
      */
-    public function getMember($emailAddress): ?MembersEntity
+    public function getMember(string $emailAddress): MembersEntity|null
     {
         if ($this->get($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress)) === true) {
             $response = $this->getResponse();
@@ -77,7 +74,7 @@ class Members extends AbstractMailchimp
 
     /**
      * Add a new member to the list
-     * To crfeste a new member you must first get a blank member entity, new \FwsMailchimp\Entities\Members()
+     * To create a new member you must first get a blank member entity, new \FwsMailchimp\Entities\Members()
      * @param MembersEntity $member
      * @return boolean
      */
@@ -92,9 +89,8 @@ class Members extends AbstractMailchimp
      * @param string $emailAddress
      * @return MembersEntity|null
      */
-    public function subscribe($emailAddress): ?MembersEntity
+    public function subscribe(string $emailAddress): ?MembersEntity
     {
-        $this->status = 'subscribed';
         if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress))) {
             $response = $this->getResponse();
             return $this->createMemberEntity($response);
@@ -107,9 +103,8 @@ class Members extends AbstractMailchimp
      * @param string $emailAddress
      * @return MembersEntity|null
      */
-    public function unsubscribe($emailAddress): ?MembersEntity
+    public function unsubscribe(string $emailAddress): ?MembersEntity
     {
-        $this->status = 'unsubscribed';
         if ($this->patch($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress)) === true) {
             $response = $this->getResponse();
             return $this->createMemberEntity($response);
@@ -122,18 +117,18 @@ class Members extends AbstractMailchimp
      * @param string $emailAddress
      * @return bool
      */
-    public function archive($emailAddress): bool
+    public function archive(string $emailAddress): bool
     {
         return $this->delete($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress));
     }
     
     /**
      * Soft delete list member (archive)
-     * @see Members::archive()
-     * @param type $emailAddress
+     * @param string $emailAddress
      * @return bool
+     *@see Members::archive()
      */
-    public function remove($emailAddress): bool
+    public function remove(string $emailAddress): bool
     {
         return $this->archive($emailAddress);
     }
@@ -144,7 +139,7 @@ class Members extends AbstractMailchimp
      * @param string $emailAddress
      * @return bool
      */
-    public function removePerminant($emailAddress): bool
+    public function removePermanent(string $emailAddress): bool
     {
         return $this->post($this->apiEndpoint . '/lists/' . $this->listId . '/members/' . $this->md5Hash($emailAddress) . '/actions/delete-permanent');
     }
@@ -171,7 +166,7 @@ class Members extends AbstractMailchimp
 
     /**
      * Find interests for member
-     * @param array $interests
+     * @param bool[] $interests
      * @return ArrayCollection
      */
     private function findMemberInterests(array $interests): ArrayCollection
@@ -181,7 +176,7 @@ class Members extends AbstractMailchimp
             if ((bool)$interested === false) {
                 continue;
             }
-            
+
             $interestCategory = $this->interests->findInterestCategory($interestId);
             if ($interestCategory === null) {
                 continue;
@@ -206,7 +201,7 @@ class Members extends AbstractMailchimp
 
     /**
      * Convert member response to a Members entity
-     * @param array $memberArray
+     * @param array<string, mixed> $memberArray
      * @return MembersEntity
      */
     private function createMemberEntity(array &$memberArray): MembersEntity
